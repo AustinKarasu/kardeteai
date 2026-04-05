@@ -1,0 +1,126 @@
+{
+  "text": [
+    {
+      "id": "human-diary-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Written",
+      "content": "I got home later than I planned, made a quick dinner, and spent half an hour trying to figure out why the washing machine sounded wrong. It turned out a coin had slipped into the filter, which was annoying but also oddly satisfying to fix."
+    },
+    {
+      "id": "human-work-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Written",
+      "content": "The meeting went longer than expected because we kept circling back to the rollout date. In the end we agreed to ship the smaller update first, watch support tickets for a week, and only then turn on the bigger workflow changes."
+    },
+    {
+      "id": "human-travel-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Written",
+      "content": "By the time we reached the station the platform was already crowded, so we stood near the back and hoped the doors would open close enough to us. They did not, and we had to drag our bags through three people and a stroller before we could get on."
+    },
+    {
+      "id": "human-product-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Written",
+      "content": "Most customers were fine with the new checkout page, but a few people on smaller phones missed the final payment button because it sat too close to the browser controls. Once we added more spacing, the completion rate recovered almost immediately."
+    },
+    {
+      "id": "human-story-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Written",
+      "content": "My uncle tells stories in a way that makes every tiny delay sound important. He will pause in the middle of a sentence, look at the ceiling for a second, and then mention some completely unnecessary detail about the weather before getting back to the point."
+    },
+    {
+      "id": "human-review-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Written",
+      "content": "The camera is good when the light is steady, but indoors it still struggles with skin tones and it takes too long to switch lenses. I like the size of the phone and the battery life, though, so I have not decided whether that tradeoff bothers me enough to return it."
+    },
+    {
+      "id": "ai-marketing-1",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "content": "Furthermore, it is important to note that modern organizations can leverage cutting-edge artificial intelligence solutions to transform core operations, improve cross-functional collaboration, and unlock robust innovation at scale across a rapidly evolving digital landscape."
+    },
+    {
+      "id": "ai-marketing-2",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "content": "Moreover, businesses that embrace state-of-the-art automation frameworks are better positioned to streamline productivity, enhance customer engagement, and navigate an increasingly complex ecosystem with seamless efficiency and measurable strategic impact."
+    },
+    {
+      "id": "ai-essay-1",
+      "mode": "balanced",
+      "expectedVerdict": "Inconclusive",
+      "content": "In conclusion, artificial intelligence represents a transformative force that is reshaping education, healthcare, finance, and creative work. By harnessing these powerful systems responsibly, society can unlock remarkable opportunities while addressing emerging ethical considerations."
+    },
+    {
+      "id": "ai-essay-2",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "content": "It is worth noting that the integration of advanced AI capabilities into everyday workflows enables teams to optimize decision-making, accelerate execution, and deliver scalable outcomes with unprecedented consistency and operational clarity."
+    },
+    {
+      "id": "ai-generic-1",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "content": "Additionally, leaders should adopt a forward-looking mindset that empowers stakeholders to align around shared objectives, cultivate resilient systems, and maximize long-term value through data-driven insight and continuous improvement."
+    },
+    {
+      "id": "ai-generic-2",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "content": "Overall, the ever-evolving realm of intelligent systems invites organizations to explore new possibilities, embrace strategic adaptation, and foster meaningful innovation through a seamless blend of human creativity and computational power."
+    }
+  ],
+  "image": [
+    {
+      "id": "real-photo-1",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Captured",
+      "url": "https://picsum.photos/seed/kardetec-bench-real-1/1400/900"
+    },
+    {
+      "id": "real-photo-2",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Captured",
+      "url": "https://picsum.photos/seed/kardetec-bench-real-2/1600/1000"
+    },
+    {
+      "id": "real-photo-3",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Captured",
+      "url": "https://picsum.photos/seed/kardetec-bench-real-3/1500/1000"
+    },
+    {
+      "id": "real-photo-4",
+      "mode": "conservative",
+      "expectedVerdict": "Likely Human-Captured",
+      "url": "https://picsum.photos/seed/kardetec-bench-real-4/1280/960"
+    },
+    {
+      "id": "ai-image-1",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://dreamy-portrait"
+    },
+    {
+      "id": "ai-image-2",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://surreal-landscape"
+    },
+    {
+      "id": "ai-image-3",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://glossy-product"
+    },
+    {
+      "id": "ai-image-4",
+      "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://neon-geometry"
+    }
+  ]
+}

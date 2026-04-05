@@ -12,8 +12,8 @@ android {
         applicationId = "com.kardetecai"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 5
+        versionName = "1.1.2"
         buildConfigField("String", "DEFAULT_API_BASE_URL", "\"https://kardetecai-backend.vercel.app/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

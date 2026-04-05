@@ -110,6 +110,24 @@ The release APK is generated at:
 
 - [app-release.apk](/d:/test/NewAPP/kardetecai-android/app/build/outputs/apk/release/app-release.apk)
 
+## Benchmarking
+
+The backend now includes a repeatable benchmark runner so calibration can improve release by release instead of relying on one-off manual checks.
+
+Run it with:
+
+```bash
+cd kardetecai-backend
+npm run benchmark
+```
+
+The benchmark suite currently covers:
+
+- human-written text samples
+- AI-style text samples
+- real-photo samples
+- synthetic generator-style image samples
+
 ## Notes on accuracy
 
 No detector can honestly promise 100% accuracy on every text, image, format, and editing workflow. The current version is tuned to be more reliable in practice by being less aggressive, more explainable, and more willing to say `Inconclusive` when the evidence is weak.

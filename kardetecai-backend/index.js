@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.1.2';
 
 app.use(helmet());
 app.use(compression());
@@ -100,7 +100,7 @@ function pickHighlights(primarySignals, fallbackSignals) {
 }
 
 function buildVerdict(scorePercent, mode, humanVerdict, aiVerdict) {
-  const aiThreshold = mode === 'balanced' ? 70 : 78;
+  const aiThreshold = mode === 'balanced' ? 66 : 78;
   const inconclusiveThreshold = mode === 'balanced' ? 42 : 48;
 
   if (scorePercent >= aiThreshold) {
@@ -149,6 +149,12 @@ class AITextDetector {
     }
     if (metrics.patternDensity > 0.6 && metrics.sentenceVariation < 0.3 && metrics.humanSignal < 0.3) {
       rawScore += 0.08;
+    }
+    if (metrics.patternDensity > 0.25 && metrics.vocabularyBalance < 0.25 && metrics.humanSignal < 0.35) {
+      rawScore += 0.1;
+    }
+    if (mode === 'balanced' && metrics.patternDensity > 0.2 && metrics.sentenceVariation < 0.35) {
+      rawScore += 0.05;
     }
 
     if (metrics.humanSignal > 0.72 && metrics.patternDensity < 0.08) {
@@ -365,6 +371,12 @@ class AIImageDetector {
 
       if (metrics.metadataRisk > 0.95) {
         rawScore += 0.18;
+      }
+      if (metrics.generatorPatternRisk > 0.9 && metrics.photoSignal < 0.42) {
+        rawScore += 0.16;
+      }
+      if (mode === 'balanced' && metrics.generatorPatternRisk > 0.6 && metrics.smoothnessRisk > 0.48) {
+        rawScore += 0.08;
       }
       if (metrics.photoSignal > 0.72 && metrics.metadataRisk < 0.1) {
         rawScore -= 0.12;
@@ -713,8 +725,18 @@ class AIImageDetector {
 const textDetector = new AITextDetector();
 const imageDetector = new AIImageDetector();
 
+function normalizeAnalysisMode(value) {
+  return typeof value === 'string' && value.toLowerCase() === 'balanced'
+    ? 'balanced'
+    : 'conservative';
+}
+
 function resolveAnalysisMode(req) {
-  return req.header('X-Analysis-Mode') === 'balanced' ? 'balanced' : 'conservative';
+  return normalizeAnalysisMode(
+    req.header('X-Analysis-Mode')
+    || req.body?.mode
+    || req.query?.mode
+  );
 }
 
 app.get('/api/health', (req, res) => {

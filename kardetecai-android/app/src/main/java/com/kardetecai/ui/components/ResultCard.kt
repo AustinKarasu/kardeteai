@@ -129,7 +129,7 @@ fun ResultCard(
                             verticalAlignment = Alignment.Top
                         ) {
                             Text(
-                                text = "•",
+                                text = "*",
                                 color = verdictColor,
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.padding(end = 8.dp)
