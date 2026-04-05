@@ -6,6 +6,8 @@ sealed class DetectionResult {
     abstract val aiProbability: Int
     abstract val confidence: Int
     abstract val verdict: String
+    abstract val summary: String
+    abstract val highlights: List<String>
 }
 
 data class TextDetectionResult(
@@ -17,6 +19,12 @@ data class TextDetectionResult(
 
     @SerializedName("verdict")
     override val verdict: String,
+
+    @SerializedName("summary")
+    override val summary: String = "",
+
+    @SerializedName("highlights")
+    override val highlights: List<String> = emptyList(),
 
     @SerializedName("metrics")
     val metrics: TextMetrics? = null
@@ -32,6 +40,12 @@ data class ImageDetectionResult(
     @SerializedName("verdict")
     override val verdict: String,
 
+    @SerializedName("summary")
+    override val summary: String = "",
+
+    @SerializedName("highlights")
+    override val highlights: List<String> = emptyList(),
+
     @SerializedName("metrics")
     val metrics: ImageMetrics? = null,
 
@@ -40,49 +54,43 @@ data class ImageDetectionResult(
 ) : DetectionResult()
 
 data class TextMetrics(
-    @SerializedName("perplexity")
-    val perplexity: Double,
+    @SerializedName("patternDensity")
+    val patternDensity: Double,
 
-    @SerializedName("burstiness")
-    val burstiness: Double,
+    @SerializedName("sentenceVariation")
+    val sentenceVariation: Double,
 
-    @SerializedName("aiPatternScore")
-    val aiPatternScore: Double,
+    @SerializedName("repetitionRisk")
+    val repetitionRisk: Double,
 
-    @SerializedName("semanticCoherence")
-    val semanticCoherence: Double,
+    @SerializedName("vocabularyBalance")
+    val vocabularyBalance: Double,
 
-    @SerializedName("repetitionScore")
-    val repetitionScore: Double,
+    @SerializedName("structureBalance")
+    val structureBalance: Double,
 
-    @SerializedName("vocabularyDiversity")
-    val vocabularyDiversity: Double,
-
-    @SerializedName("sentenceStructure")
-    val sentenceStructure: Double
+    @SerializedName("humanSignal")
+    val humanSignal: Double
 )
 
 data class ImageMetrics(
-    @SerializedName("noisePattern")
-    val noisePattern: Double,
+    @SerializedName("metadataRisk")
+    val metadataRisk: Double,
 
-    @SerializedName("colorDistribution")
-    val colorDistribution: Double,
+    @SerializedName("generatorPatternRisk")
+    val generatorPatternRisk: Double,
 
-    @SerializedName("edgeConsistency")
-    val edgeConsistency: Double,
+    @SerializedName("smoothnessRisk")
+    val smoothnessRisk: Double,
 
-    @SerializedName("metadataAnalysis")
-    val metadataAnalysis: Double,
+    @SerializedName("artifactRisk")
+    val artifactRisk: Double,
 
-    @SerializedName("compressionArtifacts")
-    val compressionArtifacts: Double,
+    @SerializedName("photoSignal")
+    val photoSignal: Double,
 
-    @SerializedName("textureAnalysis")
-    val textureAnalysis: Double,
-
-    @SerializedName("frequencyAnalysis")
-    val frequencyAnalysis: Double
+    @SerializedName("detailBalance")
+    val detailBalance: Double
 )
 
 data class ImageInfo(

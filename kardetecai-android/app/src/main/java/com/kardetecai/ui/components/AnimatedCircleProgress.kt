@@ -19,6 +19,7 @@ import com.kardetecai.ui.theme.*
 @Composable
 fun AnimatedCircleProgress(
     percentage: Int,
+    accentColor: Color,
     modifier: Modifier = Modifier,
     size: Int = 200,
     strokeWidth: Float = 20f,
@@ -39,12 +40,6 @@ fun AnimatedCircleProgress(
         currentPercentage = percentage
     }
 
-    val color = when {
-        percentage >= 70 -> AIGeneratedColor
-        percentage >= 40 -> PossiblyAIColor
-        else -> HumanWrittenColor
-    }
-
     Box(
         modifier = modifier.size(size.dp),
         contentAlignment = Alignment.Center
@@ -62,7 +57,7 @@ fun AnimatedCircleProgress(
             // Progress circle with gradient
             drawArc(
                 brush = Brush.sweepGradient(
-                    colors = listOf(color, color.copy(alpha = 0.7f), color)
+                    colors = listOf(accentColor, accentColor.copy(alpha = 0.7f), accentColor)
                 ),
                 startAngle = -90f,
                 sweepAngle = animatedProgress * 360f,
@@ -81,7 +76,7 @@ fun AnimatedCircleProgress(
                 color = TextPrimary
             )
             Text(
-                text = "AI Probability",
+                text = "AI Likelihood",
                 fontSize = (size / 15).sp,
                 color = TextSecondary
             )

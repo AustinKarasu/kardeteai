@@ -45,7 +45,7 @@ fun HomeScreen(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "AI Content Detection",
+                            text = "Calibrated Content Analysis",
                             style = MaterialTheme.typography.labelSmall,
                             color = TextSecondary
                         )
@@ -162,7 +162,7 @@ fun WelcomeCard(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Detect AI-generated content with high accuracy",
+                    text = "Review text and images with conservative, explainable AI-likelihood scoring",
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                     textAlign = TextAlign.Center

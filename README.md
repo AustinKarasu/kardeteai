@@ -1,109 +1,139 @@
-# KardetecAI - AI Content Detection App
+# KardetecAI
 
-A professional Android application with a powerful backend API for detecting AI-generated text and images with high accuracy.
+KardetecAI is an Android app and companion backend for reviewing whether a piece of text or an image shows signs that are commonly associated with AI generation.
 
-## Features
+The project is designed around one practical goal: reduce false positives. Instead of forcing a dramatic verdict from weak evidence, the app now uses a more conservative scoring model and returns `Inconclusive` when the signals do not line up clearly.
 
-- **AI Text Detection**: Analyzes writing patterns, perplexity, burstiness, and semantic coherence
-- **AI Image Detection**: Examines noise patterns, color distribution, edge consistency, metadata, and texture
-- **Professional UI/UX**: Modern dark theme with smooth animations and intuitive navigation
-- **High Accuracy**: Advanced algorithms designed to achieve 99% accuracy
-- **Detailed Metrics**: Comprehensive analysis breakdown for transparency
-- **Fast & Efficient**: Optimized for quick results without compromising accuracy
+## What the app does
 
-## Project Structure
+- Analyzes pasted text and uploaded images
+- Returns an AI-likelihood score, confidence level, and short explanation
+- Highlights the strongest signals behind each result
+- Offers `Conservative` and `Balanced` detection modes in-app
+- Connects to a Vercel-hosted backend for live analysis
 
+## Product approach
+
+KardetecAI is not presented as a magic detector. Real-world AI detection is probabilistic, and strong products should reflect that honestly.
+
+This codebase leans into that idea by:
+
+- preferring caution over overconfidence
+- exposing supporting signals instead of only a number
+- separating `Likely Human`, `Inconclusive`, and `Likely AI`
+- keeping the Android client and backend logic easy to evolve
+
+## Project structure
+
+```text
+NewAPP/
+  kardetecai-android/    Android app built with Kotlin and Jetpack Compose
+  kardetecai-backend/    Express API deployed on Vercel
 ```
-KardetecAI/
-├── kardetecai-backend/     # Node.js Express API
-│   ├── index.js           # Main server with detection algorithms
-│   ├── vercel.json        # Vercel deployment config
-│   └── package.json       # Dependencies
-│
-└── kardetecai-android/    # Android App (Kotlin + Jetpack Compose)
-    ├── app/
-    │   ├── src/main/java/com/kardetecai/
-    │   │   ├── data/      # Models, API, Repository
-    │   │   ├── ui/        # Screens, Components, Theme, ViewModel
-    │   │   └── utils/     # Utilities
-    │   └── res/           # Android resources
-    └── build.gradle.kts   # Build configuration
+
+## Android app
+
+The Android client lives in [kardetecai-android](/d:/test/NewAPP/kardetecai-android).
+
+Key parts:
+
+- Compose UI for text analysis, image analysis, and settings
+- Result cards with summaries, highlights, and metric breakdowns
+- A settings screen built for end users rather than developers
+- Persistent user preferences for analysis mode
+
+Release builds are produced from:
+
+- [app/build.gradle.kts](/d:/test/NewAPP/kardetecai-android/app/build.gradle.kts)
+- [gradle.properties](/d:/test/NewAPP/kardetecai-android/gradle.properties)
+
+## Backend API
+
+The backend lives in [kardetecai-backend](/d:/test/NewAPP/kardetecai-backend) and is deployed to:
+
+- `https://kardetecai-backend.vercel.app`
+
+Available routes:
+
+- `GET /api/health`
+- `POST /api/detect/text`
+- `POST /api/detect/image`
+- `POST /api/detect`
+- `GET /api/stats`
+
+The backend accepts an `X-Analysis-Mode` header:
+
+- `conservative`
+- `balanced`
+
+## Local development
+
+### Backend
+
+```bash
+cd kardetecai-backend
+npm install
+npm start
 ```
 
-## Backend Deployment (Vercel)
+### Android
 
-1. Install Vercel CLI:
-   ```bash
-   npm i -g vercel
-   ```
+```bash
+cd kardetecai-android
+./gradlew assembleDebug
+```
 
-2. Navigate to backend directory:
-   ```bash
-   cd kardetecai-backend
-   ```
+On Windows:
 
-3. Deploy:
-   ```bash
-   vercel
-   ```
+```powershell
+cd kardetecai-android
+.\gradlew.bat assembleDebug
+```
 
-4. Update Android app with your Vercel URL in `RetrofitClient.kt`
+## Deployment
 
-## Android App Setup
+### Backend to Vercel
 
-1. Open `kardetecai-android` in Android Studio
+```bash
+cd kardetecai-backend
+vercel --prod
+```
 
-2. Update the API URL in `app/src/main/java/com/kardetecai/data/remote/RetrofitClient.kt`:
-   ```kotlin
-   private const val BASE_URL = "https://your-vercel-url.vercel.app/"
-   ```
+### Android release APK
 
-3. Sync project with Gradle files
+```powershell
+cd kardetecai-android
+.\gradlew.bat assembleRelease
+```
 
-4. Build and run on your device or emulator
+The release APK is generated at:
 
-## API Endpoints
+- [app-release.apk](/d:/test/NewAPP/kardetecai-android/app/build/outputs/apk/release/app-release.apk)
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/health` | GET | Health check |
-| `/api/detect/text` | POST | Detect AI-generated text |
-| `/api/detect/image` | POST | Detect AI-generated image |
-| `/api/stats` | GET | API information |
+## Notes on accuracy
 
-## Detection Algorithm Details
+No detector can honestly promise 100% accuracy on every text, image, format, and editing workflow. The current version is tuned to be more reliable in practice by being less aggressive, more explainable, and more willing to say `Inconclusive` when the evidence is weak.
 
-### Text Detection
-- **Perplexity Analysis**: Measures text predictability (lower = more AI-like)
-- **Burstiness Calculation**: Analyzes sentence length variation
-- **Pattern Recognition**: Detects common AI writing patterns
-- **Semantic Coherence**: Checks noun/verb ratios
-- **Vocabulary Diversity**: Measures word repetition
-- **Sentence Structure**: Analyzes clause complexity
+That tradeoff is intentional.
 
-### Image Detection
-- **Noise Pattern Analysis**: Examines pixel-level irregularities
-- **Color Distribution**: Analyzes histogram entropy
-- **Edge Consistency**: Detects unnatural edge patterns
-- **Metadata Inspection**: Checks for AI generation markers
-- **Texture Analysis**: Examines surface detail variation
-- **Frequency Analysis**: Detects high-frequency detail patterns
+## Tech stack
 
-## Tech Stack
+Backend:
 
-**Backend:**
-- Node.js + Express
-- Sharp (Image processing)
-- Natural.js (NLP)
-- Compromise (Text analysis)
+- Node.js
+- Express
+- Sharp
+- Natural
+- Vercel
 
-**Android:**
+Android:
+
 - Kotlin
 - Jetpack Compose
-- Retrofit + OkHttp
-- Coil (Image loading)
-- Material Design 3
+- Retrofit
+- OkHttp
+- Material 3
 
 ## License
 
-MIT License
+MIT

@@ -178,7 +178,7 @@ private fun InfoCard() {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Our algorithm analyzes writing patterns, perplexity, burstiness, and semantic coherence to detect AI-generated text with high accuracy.",
+                text = "KardetecAI looks for repeated phrasing, sentence uniformity, structural balance, and other writing signals. Borderline cases are marked inconclusive instead of forcing a hard label.",
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )

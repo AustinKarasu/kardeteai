@@ -6,6 +6,10 @@ import com.kardetecai.BuildConfig
 object ApiConfig {
     private const val PREFS_NAME = "kardetecai_prefs"
     private const val KEY_BASE_URL = "api_base_url"
+    private const val KEY_ANALYSIS_MODE = "analysis_mode"
+
+    const val MODE_CONSERVATIVE = "conservative"
+    const val MODE_BALANCED = "balanced"
 
     fun getBaseUrl(context: Context): String {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -19,6 +23,20 @@ object ApiConfig {
 
     fun resetBaseUrl(context: Context) {
         setBaseUrl(context, BuildConfig.DEFAULT_API_BASE_URL)
+    }
+
+    fun getAnalysisMode(context: Context): String {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return when (prefs.getString(KEY_ANALYSIS_MODE, MODE_CONSERVATIVE)) {
+            MODE_BALANCED -> MODE_BALANCED
+            else -> MODE_CONSERVATIVE
+        }
+    }
+
+    fun setAnalysisMode(context: Context, mode: String) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val normalizedMode = if (mode == MODE_BALANCED) MODE_BALANCED else MODE_CONSERVATIVE
+        prefs.edit().putString(KEY_ANALYSIS_MODE, normalizedMode).apply()
     }
 
     private fun sanitizeBaseUrl(url: String): String {

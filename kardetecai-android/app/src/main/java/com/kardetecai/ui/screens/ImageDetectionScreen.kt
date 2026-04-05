@@ -178,7 +178,7 @@ private fun ImageInfoCard() {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Our algorithm analyzes noise patterns, color distribution, edge consistency, metadata, and texture characteristics to detect AI-generated images.",
+                text = "KardetecAI compares image metadata, dimensions, texture balance, and photo-like detail patterns. When the evidence is weak, it returns an inconclusive result instead of overcommitting.",
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )

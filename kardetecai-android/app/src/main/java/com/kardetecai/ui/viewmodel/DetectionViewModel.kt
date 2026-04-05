@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.kardetecai.data.local.ApiConfig
 import com.kardetecai.data.model.*
 import com.kardetecai.data.repository.DetectionRepository
 import kotlinx.coroutines.launch
@@ -27,14 +28,14 @@ class DetectionViewModel(context: Context) : ViewModel() {
     private val _inputText = mutableStateOf("")
     val inputText: State<String> = _inputText
 
-    private val _apiBaseUrl = mutableStateOf(repository.getBaseUrl())
-    val apiBaseUrl: State<String> = _apiBaseUrl
-
     private val _apiHealthMessage = mutableStateOf("Not tested yet")
     val apiHealthMessage: State<String> = _apiHealthMessage
 
     private val _isHealthCheckLoading = mutableStateOf(false)
     val isHealthCheckLoading: State<Boolean> = _isHealthCheckLoading
+
+    private val _analysisMode = mutableStateOf(repository.getAnalysisMode())
+    val analysisMode: State<String> = _analysisMode
 
     fun updateInputText(text: String) {
         _inputText.value = text
@@ -112,20 +113,13 @@ class DetectionViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun updateApiBaseUrl(url: String) {
-        _apiBaseUrl.value = url
-    }
-
-    fun saveApiBaseUrl() {
-        repository.setBaseUrl(_apiBaseUrl.value)
-        _apiBaseUrl.value = repository.getBaseUrl()
-        _apiHealthMessage.value = "API URL saved"
-    }
-
-    fun resetApiBaseUrl() {
-        repository.resetBaseUrl()
-        _apiBaseUrl.value = repository.getBaseUrl()
-        _apiHealthMessage.value = "API URL reset to default"
+    fun setAnalysisMode(mode: String) {
+        repository.setAnalysisMode(mode)
+        _analysisMode.value = repository.getAnalysisMode()
+        _apiHealthMessage.value = when (_analysisMode.value) {
+            ApiConfig.MODE_BALANCED -> "Balanced mode enabled"
+            else -> "Conservative mode enabled"
+        }
     }
 
     fun checkApiHealth() {

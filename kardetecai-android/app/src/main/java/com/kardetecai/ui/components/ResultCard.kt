@@ -29,14 +29,14 @@ fun ResultCard(
     modifier: Modifier = Modifier
 ) {
     val verdictColor = when {
-        result.aiProbability >= 70 -> AIGeneratedColor
-        result.aiProbability >= 40 -> PossiblyAIColor
+        result.verdict.contains("AI", ignoreCase = true) && !result.verdict.contains("Inconclusive", ignoreCase = true) -> AIGeneratedColor
+        result.verdict.contains("Inconclusive", ignoreCase = true) -> PossiblyAIColor
         else -> HumanWrittenColor
     }
 
     val verdictIcon = when {
-        result.aiProbability >= 70 -> Icons.Default.Warning
-        result.aiProbability >= 40 -> Icons.Default.Help
+        result.verdict.contains("AI", ignoreCase = true) && !result.verdict.contains("Inconclusive", ignoreCase = true) -> Icons.Default.Warning
+        result.verdict.contains("Inconclusive", ignoreCase = true) -> Icons.Default.Help
         else -> Icons.Default.CheckCircle
     }
 
@@ -93,6 +93,7 @@ fun ResultCard(
             // Animated Circle Progress
             AnimatedCircleProgress(
                 percentage = result.aiProbability,
+                accentColor = verdictColor,
                 size = 180
             )
 
@@ -100,6 +101,49 @@ fun ResultCard(
 
             // Confidence indicator
             ConfidenceIndicator(confidence = result.confidence)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = result.summary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextSecondary,
+                textAlign = TextAlign.Center
+            )
+
+            if (result.highlights.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Key Signals",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextPrimary
+                    )
+                    result.highlights.take(3).forEach { highlight ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text(
+                                text = "•",
+                                color = verdictColor,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(
+                                text = highlight,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TextSecondary,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -144,10 +188,10 @@ private fun TextMetricsSection(metrics: com.kardetecai.data.model.TextMetrics?) 
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        MetricBar("Perplexity Score", metrics.perplexity / 200.0, Info)
-        MetricBar("Burstiness", metrics.burstiness / 5.0, Primary)
-        MetricBar("AI Patterns", metrics.aiPatternScore, Warning)
-        MetricBar("Semantic Coherence", metrics.semanticCoherence, Success)
+        MetricBar("Pattern Density", metrics.patternDensity, Warning)
+        MetricBar("Sentence Variation", metrics.sentenceVariation, Primary)
+        MetricBar("Repetition Risk", metrics.repetitionRisk, Info)
+        MetricBar("Human Signal", metrics.humanSignal, Success)
     }
 }
 
@@ -163,10 +207,10 @@ private fun ImageMetricsSection(metrics: com.kardetecai.data.model.ImageMetrics?
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        MetricBar("Noise Pattern", metrics.noisePattern, Info)
-        MetricBar("Color Distribution", metrics.colorDistribution, Primary)
-        MetricBar("Edge Consistency", metrics.edgeConsistency, Success)
-        MetricBar("Texture Analysis", metrics.textureAnalysis, Secondary)
+        MetricBar("Metadata Risk", metrics.metadataRisk, Warning)
+        MetricBar("Generator Pattern Risk", metrics.generatorPatternRisk, Info)
+        MetricBar("Photo Signal", metrics.photoSignal, Success)
+        MetricBar("Detail Balance", metrics.detailBalance, Secondary)
     }
 }
 

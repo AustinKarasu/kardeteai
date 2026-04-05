@@ -17,11 +17,12 @@ import retrofit2.HttpException
 
 class DetectionRepository(private val context: Context) {
     private fun apiService() = RetrofitClient.createDetectionApiService(ApiConfig.getBaseUrl(context))
+    private fun analysisMode() = ApiConfig.getAnalysisMode(context)
 
     suspend fun detectText(text: String): Result<TextDetectionResult> = withContext(Dispatchers.IO) {
         try {
             val request = TextDetectionRequest(text)
-            val response = apiService().detectText(request)
+            val response = apiService().detectText(analysisMode(), request)
 
             if (response.success) {
                 Result.success(response.result)
@@ -41,7 +42,7 @@ class DetectionRepository(private val context: Context) {
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
-            val response = apiService().detectImage(body)
+            val response = apiService().detectImage(analysisMode(), body)
 
             // Clean up temp file
             if (file.absolutePath.contains(context.cacheDir.absolutePath)) {
@@ -75,6 +76,12 @@ class DetectionRepository(private val context: Context) {
 
     fun resetBaseUrl() {
         ApiConfig.resetBaseUrl(context)
+    }
+
+    fun getAnalysisMode(): String = ApiConfig.getAnalysisMode(context)
+
+    fun setAnalysisMode(mode: String) {
+        ApiConfig.setAnalysisMode(context, mode)
     }
 
     private fun extractErrorMessage(error: Exception): String {
