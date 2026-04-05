@@ -108,7 +108,7 @@ cd kardetecai-android
 
 The release APK is generated at:
 
-- [app-release.apk](/d:/test/NewAPP/kardetecai-android/app/build/outputs/apk/release/app-release.apk)
+- [kardeteai.apk](/d:/test/NewAPP/kardetecai-android/app/build/outputs/apk/release/kardeteai.apk)
 
 ## Benchmarking
 
@@ -127,6 +127,7 @@ The benchmark suite currently covers:
 - AI-style text samples
 - real-photo samples
 - synthetic generator-style image samples
+- conservative-mode regression checks for AI-style image fixtures
 
 ## Notes on accuracy
 

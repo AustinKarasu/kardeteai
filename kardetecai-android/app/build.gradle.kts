@@ -12,8 +12,8 @@ android {
         applicationId = "com.kardetecai"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.1.2"
+        versionCode = 6
+        versionName = "1.1.3"
         buildConfigField("String", "DEFAULT_API_BASE_URL", "\"https://kardetecai-backend.vercel.app/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -66,6 +66,13 @@ android {
     lint {
         checkReleaseBuilds = false
         abortOnError = false
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            val apkOutput = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+            apkOutput.outputFileName = "kardeteai.apk"
+        }
     }
 }
 

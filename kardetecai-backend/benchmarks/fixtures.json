@@ -105,8 +105,20 @@
       "url": "synthetic://dreamy-portrait"
     },
     {
+      "id": "ai-image-1-conservative",
+      "mode": "conservative",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://dreamy-portrait"
+    },
+    {
       "id": "ai-image-2",
       "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://surreal-landscape"
+    },
+    {
+      "id": "ai-image-2-conservative",
+      "mode": "conservative",
       "expectedVerdict": "Likely AI-Generated",
       "url": "synthetic://surreal-landscape"
     },
@@ -117,8 +129,20 @@
       "url": "synthetic://glossy-product"
     },
     {
+      "id": "ai-image-3-conservative",
+      "mode": "conservative",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://glossy-product"
+    },
+    {
       "id": "ai-image-4",
       "mode": "balanced",
+      "expectedVerdict": "Likely AI-Generated",
+      "url": "synthetic://neon-geometry"
+    },
+    {
+      "id": "ai-image-4-conservative",
+      "mode": "conservative",
       "expectedVerdict": "Likely AI-Generated",
       "url": "synthetic://neon-geometry"
     }

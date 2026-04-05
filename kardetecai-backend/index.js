@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const APP_VERSION = '1.1.2';
+const APP_VERSION = '1.1.3';
 
 app.use(helmet());
 app.use(compression());
@@ -375,6 +375,12 @@ class AIImageDetector {
       if (metrics.generatorPatternRisk > 0.9 && metrics.photoSignal < 0.42) {
         rawScore += 0.16;
       }
+      if (metrics.syntheticBlendRisk > 0.72 && metrics.cameraConfidence < 0.54) {
+        rawScore += 0.12;
+      }
+      if (metrics.formatRisk > 0.55 && metrics.photoSignal < 0.5) {
+        rawScore += 0.07;
+      }
       if (mode === 'balanced' && metrics.generatorPatternRisk > 0.6 && metrics.smoothnessRisk > 0.48) {
         rawScore += 0.08;
       }
@@ -385,12 +391,7 @@ class AIImageDetector {
       rawScore = clamp(rawScore, 0.05, 0.95);
 
       const aiProbability = Math.round(rawScore * 100);
-      const verdict = buildVerdict(
-        aiProbability,
-        mode,
-        'Likely Human-Captured',
-        'Likely AI-Generated'
-      );
+      const verdict = this.buildVerdict(aiProbability, mode, metrics);
       const confidence = buildConfidence(rawScore, suspiciousScore, humanScore);
 
       return {
@@ -443,6 +444,14 @@ class AIImageDetector {
 
     const artifactRisk = this.detectCompressionArtifacts(stats);
     const photoSignal = this.getPhotoSignal(metadata, detailBalance, noiseBalance);
+    const formatRisk = this.getFormatRisk(metadata);
+    const cameraConfidence = this.getCameraConfidence(metadata, detailBalance, noiseBalance, edgeProfile);
+    const syntheticBlendRisk = clamp(average([
+      generatorPatternRisk,
+      smoothnessRisk,
+      1 - photoSignal,
+      formatRisk,
+    ]), 0, 1);
 
     return {
       metadataRisk,
@@ -451,7 +460,43 @@ class AIImageDetector {
       artifactRisk,
       photoSignal,
       detailBalance,
+      formatRisk,
+      cameraConfidence,
+      syntheticBlendRisk,
     };
+  }
+
+  buildVerdict(aiProbability, mode, metrics) {
+    const baseVerdict = buildVerdict(
+      aiProbability,
+      mode,
+      'Likely Human-Captured',
+      'Likely AI-Generated'
+    );
+    const strongSyntheticEvidence = metrics.metadataRisk > 0.95
+      || (metrics.generatorPatternRisk > 0.9 && metrics.photoSignal < 0.46)
+      || (metrics.syntheticBlendRisk > 0.7 && metrics.cameraConfidence < 0.54);
+    const strongHumanEvidence = (
+      metrics.cameraConfidence > 0.38
+      && metrics.formatRisk < 0.2
+      && metrics.generatorPatternRisk < 0.4
+    ) || (
+      metrics.photoSignal > 0.52
+      && metrics.formatRisk < 0.18
+      && metrics.generatorPatternRisk < 0.4
+    );
+
+    if (baseVerdict === 'Likely Human-Captured' && !strongHumanEvidence) {
+      return strongSyntheticEvidence ? 'Likely AI-Generated' : 'Inconclusive';
+    }
+
+    if (baseVerdict === 'Inconclusive' && strongSyntheticEvidence) {
+      return mode === 'balanced' || aiProbability >= 58
+        ? 'Likely AI-Generated'
+        : 'Inconclusive';
+    }
+
+    return baseVerdict;
   }
 
   getMetadataRisk(exifText) {
@@ -646,6 +691,50 @@ class AIImageDetector {
     ]) + nonSquareBonus, 0, 1);
   }
 
+  getFormatRisk(metadata) {
+    const format = String(metadata.format || '').toLowerCase();
+    const hasAlpha = Boolean(metadata.hasAlpha);
+    let risk = 0.1;
+
+    if (format === 'png') {
+      risk += 0.26;
+    } else if (format === 'webp') {
+      risk += 0.18;
+    } else if (format === 'jpeg' || format === 'jpg') {
+      risk -= 0.06;
+    }
+
+    if (hasAlpha) {
+      risk += 0.18;
+    }
+    if (!metadata.exif && metadata.width === metadata.height && (format === 'png' || format === 'webp')) {
+      risk += 0.16;
+    }
+
+    return clamp(risk, 0, 1);
+  }
+
+  getCameraConfidence(metadata, detailBalance, noiseBalance, edgeProfile) {
+    const width = metadata.width || 0;
+    const height = metadata.height || 0;
+    const ratio = height === 0 ? 1 : width / height;
+    const format = String(metadata.format || '').toLowerCase();
+    const exifText = metadata.exif ? String(metadata.exif).toLowerCase() : '';
+    const cameraMarkers = ['canon', 'nikon', 'sony', 'fujifilm', 'olympus', 'apple', 'iphone', 'pixel', 'google', 'samsung'];
+    const hasCameraMarker = cameraMarkers.some((marker) => exifText.includes(marker));
+    const aspectSignal = clamp(1 - Math.abs(ratio - 1.33), 0.2, 0.95);
+    const formatSignal = format === 'jpeg' || format === 'jpg' ? 0.78 : format === 'heic' ? 0.72 : 0.38;
+    const squarePenalty = width === height ? 0.12 : 0;
+
+    return clamp(average([
+      detailBalance,
+      noiseBalance,
+      edgeProfile.edgeNaturalness,
+      aspectSignal,
+      hasCameraMarker ? 1 : formatSignal,
+    ]) - squarePenalty, 0, 1);
+  }
+
   buildSuspiciousSignals(metrics) {
     const signals = [];
 
@@ -670,6 +759,13 @@ class AIImageDetector {
         weight: 0.9,
       });
     }
+    if (metrics.formatRisk > 0.45) {
+      signals.push({
+        label: 'The export format and canvas profile look more like a generated asset than a direct camera photo.',
+        value: clamp((metrics.formatRisk - 0.45) / 0.55),
+        weight: 0.75,
+      });
+    }
     if (metrics.artifactRisk > 0.45) {
       signals.push({
         label: 'Histogram and compression patterns look less like a straightforward camera capture.',
@@ -684,10 +780,10 @@ class AIImageDetector {
   buildHumanSignals(metrics) {
     const signals = [];
 
-    if (metrics.photoSignal > 0.58) {
+    if (metrics.photoSignal > 0.52 && metrics.cameraConfidence > 0.38) {
       signals.push({
         label: 'The image behaves more like a camera capture or edited real photo.',
-        value: clamp((metrics.photoSignal - 0.58) / 0.42),
+        value: clamp((metrics.photoSignal - 0.52) / 0.48),
         weight: 1.05,
       });
     }
@@ -698,7 +794,7 @@ class AIImageDetector {
         weight: 0.95,
       });
     }
-    if (metrics.metadataRisk === 0 && metrics.generatorPatternRisk < 0.25) {
+    if (metrics.metadataRisk === 0 && metrics.generatorPatternRisk < 0.25 && metrics.formatRisk < 0.35) {
       signals.push({
         label: 'No strong AI-only metadata or generator-size signals were found.',
         value: 0.72,
