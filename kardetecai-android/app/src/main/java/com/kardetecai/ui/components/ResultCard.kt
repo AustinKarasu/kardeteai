@@ -199,7 +199,7 @@ private fun MetricBar(
         Spacer(modifier = Modifier.height(4.dp))
 
         LinearProgressIndicator(
-            progress = { clampedValue.toFloat() },
+            progress = clampedValue.toFloat(),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(6.dp)
@@ -209,3 +209,4 @@ private fun MetricBar(
         )
     }
 }
+

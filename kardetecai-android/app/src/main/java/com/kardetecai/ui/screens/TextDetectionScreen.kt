@@ -1,6 +1,7 @@
 package com.kardetecai.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -184,3 +185,5 @@ private fun InfoCard() {
         }
     }
 }
+
+

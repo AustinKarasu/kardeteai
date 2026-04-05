@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme -->
-    <style name="Theme.KardetecAI" parent="android:Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.KardetecAI" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color -->
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
