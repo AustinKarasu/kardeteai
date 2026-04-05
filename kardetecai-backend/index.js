@@ -16,10 +16,11 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet());
 app.use(compression());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://*.vercel.app', '*'],
-  methods: ['GET', 'POST'],
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -680,10 +681,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!', message: err.message });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`KardetecAI Backend running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Start server only for local development, not on Vercel serverless runtime.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`KardetecAI Backend running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
 
 module.exports = app;

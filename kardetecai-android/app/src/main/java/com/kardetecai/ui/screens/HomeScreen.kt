@@ -24,6 +24,15 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
+    var showSettings by remember { mutableStateOf(false) }
+
+    if (showSettings) {
+        SettingsScreen(
+            viewModel = viewModel,
+            onBack = { showSettings = false }
+        )
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -47,7 +56,7 @@ fun HomeScreen(
                     titleContentColor = TextPrimary
                 ),
                 actions = {
-                    IconButton(onClick = { /* Open settings */ }) {
+                    IconButton(onClick = { showSettings = true }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",

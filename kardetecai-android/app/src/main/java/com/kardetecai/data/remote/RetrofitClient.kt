@@ -7,11 +7,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-
-    // Change this to your deployed Vercel URL after deployment
-    private const val BASE_URL = "https://kardetecai-backend.vercel.app/"
-    // For local testing: private const val BASE_URL = "http://10.0.2.2:3000/"
-
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
@@ -23,11 +18,12 @@ object RetrofitClient {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val detectionApiService: DetectionApiService = retrofit.create(DetectionApiService::class.java)
+    fun createDetectionApiService(baseUrl: String): DetectionApiService {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        return retrofit.create(DetectionApiService::class.java)
+    }
 }

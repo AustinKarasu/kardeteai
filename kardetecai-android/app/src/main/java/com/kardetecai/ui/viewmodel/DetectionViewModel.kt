@@ -27,6 +27,15 @@ class DetectionViewModel(context: Context) : ViewModel() {
     private val _inputText = mutableStateOf("")
     val inputText: State<String> = _inputText
 
+    private val _apiBaseUrl = mutableStateOf(repository.getBaseUrl())
+    val apiBaseUrl: State<String> = _apiBaseUrl
+
+    private val _apiHealthMessage = mutableStateOf("Not tested yet")
+    val apiHealthMessage: State<String> = _apiHealthMessage
+
+    private val _isHealthCheckLoading = mutableStateOf(false)
+    val isHealthCheckLoading: State<Boolean> = _isHealthCheckLoading
+
     fun updateInputText(text: String) {
         _inputText.value = text
     }
@@ -100,6 +109,37 @@ class DetectionViewModel(context: Context) : ViewModel() {
     fun clearImageError() {
         if (_imageUiState.value is DetectionUiState.Error) {
             _imageUiState.value = DetectionUiState.Idle
+        }
+    }
+
+    fun updateApiBaseUrl(url: String) {
+        _apiBaseUrl.value = url
+    }
+
+    fun saveApiBaseUrl() {
+        repository.setBaseUrl(_apiBaseUrl.value)
+        _apiBaseUrl.value = repository.getBaseUrl()
+        _apiHealthMessage.value = "API URL saved"
+    }
+
+    fun resetApiBaseUrl() {
+        repository.resetBaseUrl()
+        _apiBaseUrl.value = repository.getBaseUrl()
+        _apiHealthMessage.value = "API URL reset to default"
+    }
+
+    fun checkApiHealth() {
+        viewModelScope.launch {
+            _isHealthCheckLoading.value = true
+            repository.healthCheck()
+                .onSuccess { health ->
+                    _apiHealthMessage.value =
+                        "Connected: ${health.status} (v${health.version ?: "n/a"})"
+                }
+                .onFailure { error ->
+                    _apiHealthMessage.value = "Connection failed: ${error.message ?: "Unknown error"}"
+                }
+            _isHealthCheckLoading.value = false
         }
     }
 

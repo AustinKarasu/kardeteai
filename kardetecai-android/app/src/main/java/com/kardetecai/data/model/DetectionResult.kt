@@ -115,6 +115,15 @@ data class TextDetectionRequest(
     val text: String
 )
 
+data class HealthResponse(
+    @SerializedName("status")
+    val status: String,
+    @SerializedName("timestamp")
+    val timestamp: String? = null,
+    @SerializedName("version")
+    val version: String? = null
+)
+
 sealed class DetectionUiState {
     data object Idle : DetectionUiState()
     data object Loading : DetectionUiState()
